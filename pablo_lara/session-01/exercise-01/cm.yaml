@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wp-configmap
+  namespace: exercise-01
+data:
+  WORDPRESS_FIRST_NAME: Pablo
+  WORDPRESS_LAST_NAME: Lara
+  WORDPRESS_BLOG_NAME: JiuJitsu BLOG for Exercise-01
