@@ -13,23 +13,25 @@ Before executing this command, I would recommend executing in the command line
 ~~~
 kubectl delete ns exercise-01
 ~~~
-to ensure that *namespace=exercise-01* it's not exist.
+to ensure that *namespace=exercise-01* doesn't exist.
 
 ## Liveness & Readiness Probe
 
-In the configuration file, you can see that the Deployment *wordpress-deployment.yaml* and *wordpress-canary-deployment.yaml* it has the same probe. An HTTP request to a specific route server, although I'm not sure that it's working fine.
+In the configuration file, you can see that the Deployment both *wordpress-deployment.yaml* and *wordpress-canary-deployment.yaml* define the same probes. An HTTP request to a specific route server.
 ~~~
 livenessProbe:
-    initialDelaySeconds: 90
+    initialDelaySeconds: 160
     periodSeconds: 30
     httpGet:
-      path: /
+      scheme: HTTP
+      path: /wp-login.php
       port: 80
 readinessProbe:
-    initialDelaySeconds: 15
+    initialDelaySeconds: 30
     periodSeconds: 5
     httpGet:
-      path: /
+      scheme: HTTP
+      path: /wp-login.php
       port: 80
 ~~~
 
@@ -38,35 +40,39 @@ In *mariadb-deployment.yaml* I've used:
 livenessProbe:
   exec:
     command:
-    - mysqladmin
-    - ping
+    - sh
+    - -c
+    - "mysqladmin ping -u root -p${MARIADB_ROOT_PASSWORD}"
   initialDelaySeconds: 90
   periodSeconds: 30
 readinessProbe:
   exec:
     command:
-    - mysqladmin
-    - ping
-  initialDelaySeconds: 5
-  periodSeconds: 5
+    - sh
+    - -c
+    - "mysqladmin ping -u root -p${MARIADB_ROOT_PASSWORD}"
+  initialDelaySeconds: 35
+  periodSeconds: 10
 ~~~
 
 At last, I've configured *wordpress-canary-deployment.yaml* like *canary version with wordpress 4.9.8*
-
-Once an executed commands.bash, should see the port assigned to *wordpress-svc* type NodePort to open it in your web browser.
 ~~~
-NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-mariadb         ClusterIP   10.105.9.227    <none>        3306/TCP       1s
-wordpress-svc   NodePort    10.104.36.239   <none>        80:30277/TCP   1s
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+mariadb         ClusterIP      10.105.10.15    <none>        3306/TCP       3m
+wordpress-svc   LoadBalancer   10.102.37.101   <pending>     80:32500/TCP   3m
 ~~~
 ~~~
-larabjj@ubuntu:~/Desktop/GitHub/pablo_lara/session-01/exercise-01$ kubectl get pods --namespace=exercise-01
+$ kubectl get pods --namespace=exercise-01
 NAME                                           READY   STATUS    RESTARTS   AGE
-mariadb-deployment-7c484dd4d5-bjl9b            1/1     Running   0          2m
-wordpress-canary-deployment-5d7695ccf5-5hqdt   1/1     Running   0          2m
-wordpress-deployment-7dbd5b55dc-8wbqq          1/1     Running   0          2m
-wordpress-deployment-7dbd5b55dc-flsng          1/1     Running   0          2m
-wordpress-deployment-7dbd5b55dc-nnrbg          1/1     Running   0          2m
+mariadb-deployment-7c484dd4d5-zvm5s            1/1     Running   0          1m
+wordpress-canary-deployment-7d69b68bd9-ttvlr   1/1     Running   0          1m
+wordpress-deployment-77f4c9d557-5q7fq          1/1     Running   0          1m
+wordpress-deployment-77f4c9d557-hqwk4          1/1     Running   0          1m
+wordpress-deployment-77f4c9d557-xl5k6          1/1     Running   0          1m
 ~~~
+
+Once the commands.bash script is executed, open a web browser and navigate to the URL below:
+
+http://kubernestes:32500
 
 ##### Thanks so much.

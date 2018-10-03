@@ -1,14 +1,19 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: mariadb-deployment
-  namespace: exercise-01
+  name: mariadb-master
+  namespace: exercise-02
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 40%
   template:
     metadata:
       labels:
         app: wordpress
+        role: master
         tier: backend
     spec:
       containers:
@@ -18,7 +23,7 @@ spec:
             command:
             - sh
             - -c
-            - "mysqladmin ping -u root -p${MARIADB_ROOT_PASSWORD}"
+            - "mysqladmin ping -u root -p${MARIADB_MASTER_ROOT_PASSWORD}"
           initialDelaySeconds: 90
           periodSeconds: 30
         readinessProbe:
@@ -26,14 +31,30 @@ spec:
             command:
             - sh
             - -c
-            - "mysqladmin ping -u root -p${MARIADB_ROOT_PASSWORD}"
+            - "mysqladmin ping -u root -p${MARIADB_MASTER_ROOT_PASSWORD}"
           initialDelaySeconds: 35
           periodSeconds: 10
         name: mariadb
         ports:
-        - name: mysql-port
+        - name: mariadb-server
           containerPort: 3306
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
         env:
+          - name: MARIADB_REPLICATION_MODE
+            value: master
+          - name: MARIADB_REPLICATION_USER
+            value: replication
+          - name: MARIADB_REPLICATION_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mariadb-secret
+                key: mariadb-replication-pass
           - name: MARIADB_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:

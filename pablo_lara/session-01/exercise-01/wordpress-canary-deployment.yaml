@@ -19,20 +19,22 @@ spec:
       containers:
       - image: bitnami/wordpress:4.9.8
         livenessProbe:
-            initialDelaySeconds: 90
+            initialDelaySeconds: 160
             periodSeconds: 30
             httpGet:
-              path: /
+              scheme: HTTP
+              path: /wp-login.php
               port: 80
         readinessProbe:
-            initialDelaySeconds: 15
+            initialDelaySeconds: 30
             periodSeconds: 5
             httpGet:
-              path: /
+              scheme: HTTP
+              path: /wp-login.php
               port: 80
         name: wordpress
         ports:
-        - name: wordpress
+        - name: http-wp
           containerPort: 80
         env:
           - name: WORDPRESS_DATABASE_PASSWORD
@@ -40,11 +42,6 @@ spec:
               secretKeyRef:
                 name: wordpress-secret
                 key: mariadb-database-password
-          - name: WORDPRESS_DB_HOST
-            valueFrom:
-              secretKeyRef:
-                name: wordpress-secret
-                key: mariadb-hostname
           - name: WORDPRESS_USERNAME
             valueFrom:
               secretKeyRef:
@@ -55,11 +52,18 @@ spec:
               secretKeyRef:
                 name: wordpress-secret
                 key: password-wp
-          - name: WORDPRESS_EMAIL
+          - name: WORDPRESS_FIRST_NAME
             valueFrom:
-              secretKeyRef:
-                name: wordpress-secret
-                key: email-wp
-        envFrom:
-          - configMapRef:
-              name: wp-configmap
+              configMapKeyRef:
+                name: wp-configmap
+                key: wp-name
+          - name: WORDPRESS_LAST_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: wp-configmap
+                key: wp-last-name
+          - name: WORDPRESS_BLOG_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: wp-configmap
+                key: wp-name-blog
