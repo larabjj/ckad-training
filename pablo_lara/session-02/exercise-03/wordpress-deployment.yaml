@@ -1,5 +1,5 @@
-kind: Deployment
 apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
   name: wordpress-deployment
   namespace: exercise-03
