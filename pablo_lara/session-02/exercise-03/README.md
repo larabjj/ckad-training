@@ -35,25 +35,24 @@ initContainers:
 
 ## Add a sidecar container that backs up the wp-content folder to a new volume every 10 minutes:
 ~~~
-- name: wp-backup #Backup wp-content every 10 minutes
-  image: instrumentisto/rsync-ssh
-  volumeMounts:
-  - name: wp-data
-    mountPath: /wp-content
-  command:
-  - "/bin/sh"
-  - "-c"
-  - |
-    while true; do
-      if curl http://wordpress/wp-login.php; then
-        echo "WordPress ready for backup";
-        rsync -av --delete /wp-data /wp-backup;
-        echo "Backup completed";
-      else
-        echo "Backup impossible";
-      fi
-      sleep 600;
-    done;
+image: woahbase/alpine-ssh
+volumeMounts:
+- name: wp-data
+  mountPath: /bitnami/wordpress/wp-content
+command:
+- "/bin/sh"
+- "-c"
+- |
+  while true; do
+    if curl http://myblog.com/wp-login.php; then
+      echo "WordPress ready for backup";
+      rsync -av --delete /wp-data /wp-backup;
+      echo "Backup completed";
+    else
+      echo "Backup impossible";
+    fi
+    sleep 600;
+  done;
 ~~~
 
 Once the commands.bash script is executed, open a web browser and navigate to the URL below:

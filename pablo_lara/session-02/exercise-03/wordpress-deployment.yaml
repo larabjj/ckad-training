@@ -1,5 +1,5 @@
-kind: Deployment
 apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
   name: wordpress-deployment
   namespace: exercise-03
@@ -92,16 +92,16 @@ spec:
         image: alpine/socat
         command: ['/bin/sh','-c', 'socat tcp-listen:3306,fork,reuseaddr tcp-connect:mariadb:3306;']
       - name: wp-backup #Backup wp-content every 10 minutes
-        image: instrumentisto/rsync-ssh
+        image: woahbase/alpine-ssh
         volumeMounts:
         - name: wp-data
-          mountPath: /wp-content
+          mountPath: /bitnami/wordpress/wp-content
         command:
         - "/bin/sh"
         - "-c"
         - |
           while true; do
-            if curl http://wordpress/wp-login.php; then
+            if curl http://myblog.com/wp-login.php; then
               echo "WordPress ready for backup";
               rsync -av --delete /wp-data /wp-backup;
               echo "Backup completed";
@@ -111,8 +111,6 @@ spec:
             sleep 600;
           done;
         volumeMounts:
-        - mountPath: /wp-data
-          name: wp-data
         - mountPath: /wp-backup
           name: wp-backup
       volumes:
