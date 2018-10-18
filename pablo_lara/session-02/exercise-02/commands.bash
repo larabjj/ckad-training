@@ -5,6 +5,7 @@ kubectl create -f ns.yaml
 ## Create secrets for mariadb,wordpress
 kubectl create -f mariadb-secret.yaml
 kubectl create -f wordpress-secret.yaml
+kubectl create -f ingress-tls.yaml
 ## Create ConfigMap
 kubectl create -f cm.yaml
 ## Create services for mariadb, wordpress
