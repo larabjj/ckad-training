@@ -26,7 +26,12 @@ Persistence added
 
 ## Only WordPress and Drupal can access the database using NetworkPolices.
 
-*Pending*
+Implemented using policyTypes : Ingress
+
+~~~
+policyTypes:
+- Ingress
+~~~
 
 ## Add 2 Ingress rules.
 

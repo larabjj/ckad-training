@@ -8,6 +8,8 @@ kubectl create -f wordpress-secret.yaml
 kubectl create -f ingress-tls.yaml
 ## Create ConfigMap
 kubectl create -f cm.yaml
+# Create NetworkPolicy
+kubectl create -f networkpolicies.yaml
 ## Create services for mariadb, wordpress and drupal
 kubectl create -f mariadb-svc.yaml
 kubectl create -f wordpress-svc.yaml
