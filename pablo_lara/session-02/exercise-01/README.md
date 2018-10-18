@@ -60,7 +60,13 @@ Error executing 'postInstallation': Group '1001' not found
 
 ## Add TLS certificate
 
-*Pending*
+I use openssl to create the key:
+
+~~~
+openssl req -newkey rsa:2048 -nodes -keyout onboard.192.168.99.6.nip.io.key -x509 -days 365 -out onboard.192.168.99.6.nip.io.crt
+Generating a 2048 bit RSA private key
+
+~~~
 
 ## Force to HTTPS redirection
 

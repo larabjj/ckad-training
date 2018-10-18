@@ -10,6 +10,10 @@ metadata:
     nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
 spec:
+  tls:
+  - hosts:
+    - drupal.myblog.com
+    secretName: secret-tls
   rules:
   - host: drupal.myblog.com
     http:
