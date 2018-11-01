@@ -37,6 +37,7 @@ mariadb:
   db:
     name: bitnami_wordpress
     user: bn_wordpress
+    password: bitnami
   master:
     persistence:
       enabled: true
@@ -47,20 +48,16 @@ mysql:
   enabled: false
   replication:
     enabled: false
-  db:
-    name: bitnami_wordpress
-    user: bn_wordpress
   master:
     persistence:
       enabled: true
       accessMode: ReadWriteOnce
-      size: 5Gi
 ########
 serviceType: LoadBalancer
 ########
 mysqldump:
-  enabled: false
-  everyMinutes: 20
+  enabled: true
+  everyMinutes: 60
   persistence:
     enabled: true
     accessMode: ReadWriteOnce

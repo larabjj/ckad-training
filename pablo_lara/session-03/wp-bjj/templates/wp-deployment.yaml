@@ -32,10 +32,10 @@ spec:
         image: {{ template "wordpress.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
         ports:
-        - name: http-wp
+        - name: http
           containerPort: 80
           protocol: TCP
-        - name: https-wp
+        - name: https
           containerPort: 443
           protocol: TCP
         env:
